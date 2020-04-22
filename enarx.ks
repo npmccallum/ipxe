@@ -53,6 +53,13 @@ install -o root -g root -m 600 /dev/stdin /etc/sudoers.d/nopasswd <<EOF
 %wheel	ALL=(ALL)	NOPASSWD: ALL
 EOF
 
+# Give SGX and SEV device node access to their respective groups
+groupadd -f sgx
+echo "SUBSYSTEM==\"sgx\", MODE=\"0666\", GROUP=\"sgx\"" > /etc/udev/rules.d/50-sgx.rules
+
+groupadd -f sev
+echo "KERNEL==\"sev\", MODE=\"0666\", GROUP=\"sev\"" > /etc/udev/rules.d/50-sev.rules
+
 # Use systemd-networkd and systemd-resolved
 ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 rm -f /etc/sysconfig/network-scripts/ifcfg-*
